@@ -1,7 +1,9 @@
 package abracad.avro;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.apache.avro.LogicalType;
 import org.apache.avro.Schema;
 import org.apache.avro.UnresolvedUnionException;
 import org.apache.avro.generic.GenericDatumWriter;
@@ -22,6 +24,8 @@ private static class Vars {
     private static final Var resolveUnion = RT.var(NS, "resolve-union");
     private static final Var writeBytes = RT.var(NS, "write-bytes");
     private static final Var writeFixed = RT.var(NS, "write-fixed");
+    private static final Var logicalType = RT.var("abracad.avro.util", "logical-type");
+    private static final Var writeLogical = RT.var("abracad.avro.util", "write-logical");
 
     static {
         RT.var("clojure.core", "require").invoke(Symbol.intern(NS));
@@ -42,6 +46,9 @@ ClojureDatumWriter(Schema schema) {
 public void
 write(Schema schema, Object datum, Encoder out) throws IOException {
     try {
+        String lt = schema.getProp(LogicalType.LOGICAL_TYPE_PROP);
+        if (lt != null) datum = Vars.writeLogical.invoke(lt, schema, datum);
+
         switch (schema.getType()) {
         case INT: out.writeInt(RT.intCast(datum)); break;
         case LONG: out.writeLong(RT.longCast(datum)); break;
@@ -79,6 +86,17 @@ writeArray(Schema schema, Object datum, Encoder out)
 @Override
 protected int
 resolveUnion(Schema union, Object datum) {
+    String name = (String)Vars.logicalType.invoke(datum);
+    if (name != null) {
+        List<Schema> types = union.getTypes();
+        for (int i = 0; i < types.size(); i++) {
+            String lt = types.get(i).getProp(LogicalType.LOGICAL_TYPE_PROP);
+            if (lt != null && lt.equals(name)) {
+                return i;
+            }
+        }
+        throw new UnresolvedUnionException(union, datum);
+    }
     Object i = Vars.resolveUnion.invoke(this, union, datum);
     if (i == null) throw new UnresolvedUnionException(union, datum);
     return RT.intCast(i);
