@@ -242,9 +242,10 @@ record serialization."
 
 (defn resolve-union*
   [^Schema schema ^Object datum]
-  (let [n (if (element-union? schema)
-            (edn/schema-name datum)
-            (avro/schema-name datum))]
+  (let [n (or (::avro/schema (meta datum))
+              (if (element-union? schema)
+                (edn/schema-name datum)
+                (avro/schema-name datum)))]
     (if-let [index (and n (.getIndexNamed schema n))]
       index
       (loop [schemas (.getTypes schema), i (long 0)]

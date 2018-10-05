@@ -59,3 +59,15 @@ evaluated at macro-expansion time."
 already an instance of `c`."
   {:inline (identity coerce*), :inline-arities #{3}}
   [c f x] (if (instance? c x) x (f x)))
+
+(defprotocol LogicalType
+  (logical-type [this]))
+
+(extend-type Object
+  LogicalType
+  (logical-type [_]))
+
+(defn- dispatch-logical [name schema datum] name)
+
+(defmulti read-logical dispatch-logical)
+(defmulti write-logical dispatch-logical)
