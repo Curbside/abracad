@@ -1,4 +1,4 @@
-(defproject curbside/abracad "0.4.16"
+(defproject curbside/abracad "0.4.17"
   :description "De/serialize Clojure data structures with Avro."
   :url "http://github.com/damballa/abracad"
   :licenses [{:name "Eclipse Public License"
@@ -31,7 +31,8 @@
 
   :profiles {:dev         {:dependencies
                            [[midje "1.9.1" :exclusions [org.clojure/clojure]]
-                            [nubank/matcher-combinators "0.2.1"]]}
+                            [nubank/matcher-combinators "0.2.1"]
+                            [joda-time "2.10"]]}
              :clojure-1-7 {:dependencies
                            [[org.clojure/clojure "1.7.0"]
                             [midje "1.9.1" :exclusions [org.clojure/clojure]]
