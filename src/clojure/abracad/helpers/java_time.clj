@@ -1,6 +1,6 @@
 (ns abracad.helpers.java-time
   (:require [abracad.avro :as avro])
-  (:import (java.time Duration Instant LocalDate LocalTime)))
+  (:import (java.time Instant LocalDate LocalTime)))
 
 (def ^:const ^:private nanos-in-milli 1000000)
 
