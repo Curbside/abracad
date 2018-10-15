@@ -10,7 +10,7 @@
   ([_ _ ^LocalDate datum]
    (-> (.toDateTimeAtStartOfDay datum DateTimeZone/UTC)
        (.getMillis)
-       (/ 1000)
+       (/ millis-in-second)
        (int))))
 
 (avro/deflogical LocalTime "time-millis"
