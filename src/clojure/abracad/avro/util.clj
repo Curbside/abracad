@@ -63,8 +63,10 @@ already an instance of `c`."
 (defprotocol LogicalType
   (logical-type [this]))
 
-(extend-type Object
-  LogicalType
+(extend-protocol LogicalType
+  nil
+  (logical-type [_])
+  Object
   (logical-type [_]))
 
 (defn- dispatch-logical [name schema datum] name)
