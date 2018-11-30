@@ -3,7 +3,8 @@
   {:private true}
   (:require [abracad.avro :as avro]
             [abracad.avro.edn :as edn]
-            [abracad.avro.util :as util])
+            [abracad.avro.util :as util]
+            [clojure.set :as set])
   (:import [abracad.avro ArrayAccessor ClojureDatumWriter]
            [clojure.lang Indexed IRecord Named Sequential]
            [java.nio ByteBuffer]
@@ -70,9 +71,18 @@ record serialization."
     (.writeFixed encoder bytes)))
 
 (defn schema-error!
-  [^Schema schema datum]
-  (throw (ex-info "Cannot write datum as schema"
-                  {:datum datum, :schema (.getFullName schema)})))
+  ([^Schema schema datum fields]
+   (let [actual-fields (avro/field-list datum)
+         unexpected-fields (set/difference (set (avro/field-list datum)) fields)]
+     (throw (ex-info "Cannot write datum as schema"
+                     {:datum             datum
+                      :schema            (.getFullName schema)
+                      :expected-fields   fields
+                      :actual-fields     actual-fields
+                      :unexpected-fields unexpected-fields}))))
+  ([^Schema schema datum]
+   (throw (ex-info "Cannot write datum as schema"
+                   {:datum datum, :schema (.getFullName schema)}))))
 
 (defn wr-named
   [^ClojureDatumWriter writer ^Schema schema datum ^Encoder out]
@@ -85,7 +95,7 @@ record serialization."
   [^ClojureDatumWriter writer ^Schema schema datum ^Encoder out]
   (let [fields (into #{} (map util/field-keyword (.getFields schema)))]
     (when (not-every? fields (avro/field-list datum))
-      (schema-error! schema datum))
+      (schema-error! schema datum fields))
     (doseq [^Schema$Field f (.getFields schema)
             :let [key (util/field-keyword f), val (avro/field-get datum key)]]
       (.write writer (.schema f) val out))))
