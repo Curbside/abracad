@@ -71,18 +71,15 @@ record serialization."
     (.writeFixed encoder bytes)))
 
 (defn schema-error!
-  ([^Schema schema datum fields]
-   (let [actual-fields (avro/field-list datum)
-         unexpected-fields (set/difference (set (avro/field-list datum)) fields)]
-     (throw (ex-info "Cannot write datum as schema"
-                     {:datum             datum
-                      :schema            (.getFullName schema)
-                      :expected-fields   fields
-                      :actual-fields     actual-fields
-                      :unexpected-fields unexpected-fields}))))
-  ([^Schema schema datum]
-   (throw (ex-info "Cannot write datum as schema"
-                   {:datum datum, :schema (.getFullName schema)}))))
+  [^Schema schema datum fields]
+  (let [actual-fields (avro/field-list datum)
+        unexpected-fields (set/difference (set (avro/field-list datum)) fields)]
+    (throw (ex-info "Cannot write datum as schema"
+                    {:datum             datum
+                     :schema            (.getFullName schema)
+                     :expected-fields   fields
+                     :actual-fields     actual-fields
+                     :unexpected-fields unexpected-fields}))))
 
 (defn wr-named
   [^ClojureDatumWriter writer ^Schema schema datum ^Encoder out]
@@ -96,15 +93,18 @@ record serialization."
   (let [fields (into #{} (map util/field-keyword (.getFields schema)))]
     (when (not-every? fields (avro/field-list datum))
       (schema-error! schema datum fields))
-    (doseq [^Schema$Field f (.getFields schema)
-            :let [key (util/field-keyword f), val (avro/field-get datum key)]]
-      (.write writer (.schema f) val out))))
+    (doseq [^Schema$Field field (.getFields schema)
+            :let [key (util/field-keyword field), val (avro/field-get datum key)]]
+      (try
+           (.write writer (.schema field) val out)
+         (catch NullPointerException e
+           (throw (Exception. (str "Null value for non-null field : " field) e)))))))
 
 (defn wr-positional
   [^ClojureDatumWriter writer ^Schema schema datum ^Encoder out]
   (let [fields (.getFields schema), nfields (count fields)]
     (when (not= nfields (count datum))
-      (schema-error! schema datum))
+      (schema-error! schema datum fields))
     (dorun
      (map (fn [^Schema$Field f val] (.write writer (.schema f) val out))
           fields datum))))
