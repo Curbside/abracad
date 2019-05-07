@@ -27,7 +27,7 @@
 (def date (avro/parse-schema {:type :int
                               :logicalType :date}))
 
-(def time (avro/parse-schema {:type :long
+(def time (avro/parse-schema {:type :int
                               :logicalType (LogicalTypeWrapper. "time-millis")}))
 
 (def timestamp (avro/parse-schema {:type :long
