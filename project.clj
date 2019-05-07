@@ -32,7 +32,11 @@
   :profiles {:dev         {:dependencies
                            [[midje "1.9.1" :exclusions [org.clojure/clojure]]
                             [nubank/matcher-combinators "0.2.1"]
-                            [joda-time "2.10"]]}
+                            [joda-time "2.10"]
+                            [com.fzakaria/slf4j-timbre "0.3.12"] ; Forward SLF4J to Timbre
+                            [com.taoensso/timbre "4.10.0"]]
+                           :jvm-opts
+                           ["-DTIMBRE_LEVEL=:debug"]}
              :clojure-1-7 {:dependencies
                            [[org.clojure/clojure "1.7.0"]
                             [midje "1.9.1" :exclusions [org.clojure/clojure]]
