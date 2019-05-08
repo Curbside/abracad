@@ -1,4 +1,4 @@
-(defproject curbside/abracad "0.4.20-SNAPSHOT"
+(defproject curbside/abracad "0.4.21-SNAPSHOT"
   :description "De/serialize Clojure data structures with Avro."
   :url "http://github.com/damballa/abracad"
   :licenses [{:name "Eclipse Public License"
@@ -54,4 +54,12 @@
   :java-source-paths ["src/java"]
   :test-paths ["test/"]
 
-  :javac-options ["-target" "1.8" "-source" "1.8"])
+  :javac-options ["-target" "1.8" "-source" "1.8"]
+  :deploy-repositories [["snapshot"
+                         {:url "https://curbside.jfrog.io/curbside/libs-snapshot-local/"
+                          :username :env/artifactory_user
+                          :password :env/artifactory_pass}]
+                        ["releases"
+                         {:url "https://curbside.jfrog.io/curbside/libs-release-local/"
+                          :username :env/artifactory_user
+                          :password :env/artifactory_pass}]])
