@@ -4,7 +4,8 @@
   (:require [abracad.avro :as avro]
             [abracad.avro.edn :as edn]
             [abracad.avro.util :as util]
-            [clojure.set :as set])
+            [clojure.set :as set]
+            [clojure.reflect :as cr])
   (:import [abracad.avro ArrayAccessor ClojureDatumWriter]
            [clojure.lang Indexed IRecord Named Sequential]
            [java.nio ByteBuffer]
@@ -23,6 +24,8 @@
   "When `true`, do not perform schema field validation checks during
 record serialization."
   false)
+
+(def array-types (map cr/typename [java.lang.String java.lang.Long java.lang.Double]))
 
 (defn element-schema?
   [^Schema schema]
@@ -146,9 +149,16 @@ record serialization."
 
 (defn array-prim?
   [datum]
-  (let [cls ^Class (class datum)]
+  (let [java-datum (case (cr/typename (class datum))
+                     "clojure.lang.PersistentVector" (into-array datum)
+                     "clojure.lang.PersistentList" (into-array datum)
+                     datum)
+        cls ^Class (class java-datum)]
     (and (-> cls .isArray)
-         (-> cls .getComponentType .isPrimitive))))
+         (-> cls
+             .getComponentType
+             (cr/typename)
+             (#(some? (some #{%} array-types)))))))
 
 (defn write-array-seq
   [^ClojureDatumWriter writer ^Schema schema ^Object datum ^Encoder out]
@@ -161,9 +171,7 @@ record serialization."
   [^ClojureDatumWriter writer ^Schema schema ^Object datum ^Encoder out]
   (let [schema (.getElementType schema)]
     (.writeArrayStart out)
-    (if (array-prim? datum)
-      (ArrayAccessor/writeArray datum out)
-      (write-array-seq writer schema datum out))
+    (write-array-seq writer schema datum out)
     (.writeArrayEnd out)))
 
 (defn schema-name-type
@@ -248,6 +256,7 @@ record serialization."
     Schema$Type/INT     (integer? datum)
     Schema$Type/DOUBLE  (float? datum)
     Schema$Type/FLOAT   (float? datum)
+    Schema$Type/ARRAY   (array-prim? datum)
     #_ else             false))
 
 (defn resolve-union*
