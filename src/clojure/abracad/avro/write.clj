@@ -25,7 +25,7 @@
 record serialization."
   false)
 
-(def array-types (map cr/typename [java.lang.String java.lang.Long java.lang.Double]))
+(def array-types (map cr/typename [java.lang.String java.lang.Long java.lang.Double java.lang.Object]))
 
 (defn element-schema?
   [^Schema schema]
