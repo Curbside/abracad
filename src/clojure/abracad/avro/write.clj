@@ -152,6 +152,7 @@ record serialization."
   (let [java-datum (case (cr/typename (class datum))
                      "clojure.lang.PersistentVector" (into-array datum)
                      "clojure.lang.PersistentList" (into-array datum)
+                     "clojure.lang.LazySeq" (into-array datum)
                      datum)
         cls ^Class (class java-datum)]
     (and (-> cls .isArray)
