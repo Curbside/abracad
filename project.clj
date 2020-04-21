@@ -1,4 +1,4 @@
-(defproject curbside/abracad "0.4.23-SNAPSHOT"
+(defproject curbside/abracad "0.4.23"
   :description "De/serialize Clojure data structures with Avro."
   :url "http://github.com/damballa/abracad"
   :licenses [{:name "Eclipse Public License"
