@@ -55,11 +55,7 @@
   :test-paths ["test/"]
 
   :javac-options ["-target" "1.8" "-source" "1.8"]
-  :deploy-repositories [["snapshot"
-                         {:url "https://curbside.jfrog.io/curbside/libs-snapshot-local/"
-                          :username :env/artifactory_user
-                          :password :env/artifactory_pass}]
-                        ["releases"
-                         {:url "https://curbside.jfrog.io/curbside/libs-release-local/"
-                          :username :env/artifactory_user
-                          :password :env/artifactory_pass}]])
+  :deploy-repositories [["releases" {:url "https://maven.pkg.github.com/RakutenReady/abracad"
+                                     :username :env/github_actor
+                                     :password :env/github_token
+                                     :sign-releases false}]])
