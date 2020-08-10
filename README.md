@@ -21,7 +21,7 @@ Leiningen `project.clj`:
 ```
 
 ## Release
-`RakutenReady/abracad` release process is manual since the library is not maintained.
+`RakutenReady/abracad` release process is currently manual.
 
 From master, run `lein release`
 
