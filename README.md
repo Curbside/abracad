@@ -20,6 +20,11 @@ Leiningen `project.clj`:
 [nubank/abracad "0.4.15"]
 ```
 
+## Release
+`RakutenReady/abracad` release process is currently manual.
+
+From master, run `lein release`
+
 ## Usage
 
 Example usage follows; [detailed API documentation][api] available,
@@ -30,8 +35,8 @@ generated via [codox][codox].
 
 ### Schemas
 
-[Avro schemas](https://avro.apache.org/docs/current/spec.html#schemas) may be 
-parsed from JSON (from either strings or input streams), from the Clojure data 
+[Avro schemas](https://avro.apache.org/docs/current/spec.html#schemas) may be
+parsed from JSON (from either strings or input streams), from the Clojure data
 representation of a JSON schema, or from existing Avro Schema objects.
 
 ```clj
