@@ -25,7 +25,12 @@
 record serialization."
   false)
 
-(def array-types (map cr/typename [java.lang.String java.lang.Long java.lang.Double java.lang.Object clojure.lang.PersistentArrayMap]))
+(def array-types (map cr/typename [java.lang.String
+                                   java.lang.Long
+                                   java.lang.Double
+                                   java.lang.Object
+                                   clojure.lang.PersistentArrayMap
+                                   clojure.lang.PersistentHashMap]))
 
 (defn element-schema?
   [^Schema schema]
