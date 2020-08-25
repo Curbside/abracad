@@ -30,7 +30,8 @@ record serialization."
                                    java.lang.Double
                                    java.lang.Object
                                    clojure.lang.PersistentArrayMap
-                                   clojure.lang.PersistentHashMap]))
+                                   clojure.lang.PersistentHashMap
+                                   clojure.lang.PersistentTreeMap]))
 
 (defn element-schema?
   [^Schema schema]
