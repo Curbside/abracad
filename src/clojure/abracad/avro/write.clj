@@ -29,6 +29,7 @@ record serialization."
                                    java.lang.Long
                                    java.lang.Double
                                    java.lang.Object
+                                   java.lang.Boolean
                                    clojure.lang.PersistentArrayMap
                                    clojure.lang.PersistentHashMap
                                    clojure.lang.PersistentTreeMap]))
